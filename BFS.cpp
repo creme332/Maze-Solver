@@ -77,8 +77,8 @@ void output1() {
 
 }
 
-bool DFS(int row, int col) {
-    output(row, col);
+bool DFS(int row, int col) { //called as DFS(0,0)
+    output(row, col); //output current position
     vector <int> dr = { 1,0,-1,0 }; // translation horizontally
     vector <int> dc = { 0,1,0,-1 }; //translation vertically
 
