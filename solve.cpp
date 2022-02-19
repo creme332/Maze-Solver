@@ -77,7 +77,7 @@ void output1() {
 
 }
 
-bool path(int row, int col) {
+bool DFS(int row, int col) {
     output(row, col);
     vector <int> dr = { 1,0,-1,0 }; // translation horizontally
     vector <int> dc = { 0,1,0,-1 }; //translation vertically
@@ -97,10 +97,9 @@ bool path(int row, int col) {
 
 
 int BFS() {// find shortest path using BFS
-    map <pair<int, int>, bool> AlreadyVisited = { {{0, 0},1} }; //stores already visited coordinates
     map <pair<int, int>, int> distance = { {{0, 0},0} }; //minimum distance from start (in terms of number of moves required)
     deque <pair<int, int>> NextNode = { {0, 0} }; //head of queue is the next node to be checked
-    map <pair<int, int>, pair<int, int>> precedingnode = { {{0, 0}, {-1,-1}} }; //parent node of a node.
+    map <pair<int, int>, pair<int, int>> parentnode = { {{0, 0}, {-1,-1}} }; //parent node of a node.
 
     vector <int> dx = { 1,0,-1,0 }; // translation horizontally
     vector <int> dy = { 0,1,0,-1 }; //translation vertically
@@ -115,13 +114,11 @@ int BFS() {// find shortest path using BFS
             y = currentcoord.second + dy[i];
 
             if (x > -1 && x < m.size() && y > -1
-                && y < m[m.size() - 1].size() && AlreadyVisited[{x, y}] == 0
+                && y < m[m.size() - 1].size() && parentnode.count({ x,y }) == 0
                 && m[x][y] != 'W')
             {
-                //output(x,y);
-                AlreadyVisited[{x, y}] = 1;
                 NextNode.push_back({ x,y });
-                precedingnode[{x, y}] = { currentcoord.first,currentcoord.second };
+                parentnode[{x, y}] = { currentcoord.first,currentcoord.second };
                 distance[{x, y}] = distance[currentcoord] + 1;
 
                 if (x == m.size() - 1 && y == m[m.size() - 1].size() - 1) {//shortest path reached
@@ -130,8 +127,8 @@ int BFS() {// find shortest path using BFS
                     while (x != -1) {
                         shortestpath.push_front({ x, y });
                         x0 = x; y0 = y;
-                        x = precedingnode[{x0, y0}].first;
-                        y = precedingnode[{x0, y0}].second;
+                        x = parentnode[{x0, y0}].first;
+                        y = parentnode[{x0, y0}].second;
                     }
                     return ans;
                 }
@@ -147,6 +144,8 @@ int BFS() {// find shortest path using BFS
 int main() {
     cout << BFS() << endl; //start at (0,0) and move to (n-1, n-1)
     output1(); //NOTE : maze is permanently modified after this call and cannot be used again.
+    
+    //cout<<DFS();
 
 
 }
