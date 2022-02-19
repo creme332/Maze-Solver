@@ -28,7 +28,7 @@ string color(string a) { //color character a
     if (a == "o")return "\x1B[33m0\033[0m"; //yellow character and trail
     if (a == "t")return "\x1B[33mo\033[0m"; //yellow trail
     if (a == "W")return "\x1B[31mW\033[0m"; //red walls
-    return "\x1B[92m" + a + "\033[0m"; //cyan ground and finish
+    return "\x1B[92m" + a + "\033[0m"; //cyan ground and finish point
 }
 void output(int r, int c) {
     //(r,c) current position
