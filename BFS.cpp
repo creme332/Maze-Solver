@@ -29,7 +29,7 @@ string color(string a) { //color character a
     return "\x1B[92m" + a + "\033[0m"; //cyan ground and finish point
 }
 
-void output1() { 
+void output() { 
     //animate shortest path for BFS()
     //move character + leave a trail behind.
  
@@ -55,7 +55,7 @@ void output1() {
             cout << "\n";
         }
 
-        for (int k = 0;k < 100000000;k++); //freeze screen
+        for (int k = 0;k < 99999999;k++); //freeze screen
         system("CLS");
 
     }
@@ -107,6 +107,6 @@ int BFS() {// find shortest path using BFS
 
 int main() {
     cout << BFS() << endl; 
-    output1(); //NOTE : maze is permanently modified after this call and cannot be used again.    
+    output(); //NOTE : maze is permanently modified after this call and cannot be used again.    
 
 }
