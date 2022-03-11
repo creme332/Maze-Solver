@@ -4,6 +4,7 @@
 U
 # Future work # 
 - [ ] Take user input for maze
+- [ ] Fix screen flickering
 - [ ] Randomly generate maze
 - [ ] Add Dijktra algorithm
 - [ ] Add A* star algorithm
