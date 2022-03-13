@@ -10,4 +10,6 @@ BFS
 # Future work # 
 - [ ] Randomly generate maze
 - [ ] Add Dijktra algorithm
+- [ ] Upgrade output 
+- [ ] Use bigger mazes in gif
 - [ ] Add A* star algorithm
