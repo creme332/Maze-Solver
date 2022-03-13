@@ -1,7 +1,7 @@
 # Maze-Solver
 DFS
 
-![image](https://user-images.githubusercontent.com/65414576/157853532-8f939886-ca46-48db-aabf-3777a01f4a18.png)
+![](Media/DFS.gif)
 
 BFS
 
