@@ -49,8 +49,45 @@ void setCursorPosition(const int row, const int col)
     COORD coord = { (SHORT)col, (SHORT)row };
     SetConsoleCursorPosition(hOut, coord);
 }
+
+int Dijktra() {
+    map <pair<int, int>, int> distance = { {{0,0},0} };
+    multimap <int, pair<int, int>> nextnode = { {0,{0,0}} };
+    //next node to be visited and their corresponding distances. We first access nodes closest to source.
+    //multimap sorts by distance and allows duplicate distances.
+
+    int dx[] = { 1,0,-1,0 }; // translation horizontally
+    int dy[] = { 0,1,0,-1 }; //translation vertically
+    int x, y;//new position
+
+    while (nextnode.size() != 0) {
+        pair<int, int> current = nextnode.begin()->second; //coordinates of current node
+        nextnode.erase(nextnode.begin()); //dequeue
+
+        for (int i = 0;i < 4;i++) {
+            x = current.first + dx[i]; y = current.second + dy[i];
+            if (x < m.size() && y < maze.size()) {
+
+                int d = distance[current] + abs(maze[current.first][current.second] - maze[x][y]);
+
+                if (distance.count({ x,y })) { // if key exists => it already has a previous min distance
+                    if (d < distance[{x, y}]) { //new minimum distance found
+                        distance[{x, y}] = d;
+                        nextnode.insert({d, { x,y } }); //must update distance for other connected nodes 
+                    }
+                }
+                else { //this is the first time we are seeing node (x,y)
+                    distance[{x, y}] = d;
+                    nextnode.insert({ d, { x,y } });
+                }
+            }
+        }
+    }
+
+    return distance[{m.size() - 1, m[m.size()-1].size() - 1}];
+}
 int main(){
     system("cls");
-    cout<<"Hello world";
+    InitialiseTerminal();
     cout<<"\n";
 }
