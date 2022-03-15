@@ -5,7 +5,7 @@ DFS
 
 BFS
 
-![image](https://user-images.githubusercontent.com/65414576/157854062-004de699-0fa5-4252-a090-1a3e415836c1.png)
+![](Media/BFS.gif)
 
 # Future work # 
 - [ ] Randomly generate maze
