@@ -1,7 +1,7 @@
 # Maze-Solver
 DFS
 
-![](Media/DFS.gif)
+![](Media/UpdatedDFS.gif)
 
 BFS
 
