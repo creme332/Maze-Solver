@@ -4,35 +4,43 @@
 #include <windows.h>
 #include <thread>
 #include <cstdlib>
+#define WALL 'W'
+#define EMPTY '.'
+#define PATH 'o'
+#define DESTINATION 'f'
 using namespace std;
 
 //Goal : Reach (n-1,n-1) from (0,0). Can move in any orthogonal direction
 
 vector <vector<char>> m = {
-    {'.','W','.','.','.','.','.','.','.'},
-    {'.','.','.','W','.','W','.','W','.'},
-    {'.','.','.','W','W','W','.','.','.'},
-    {'.','.','.','.','.','W','.','W','.'},
-    {'W','.','.','W','W','.','.','.','.'},
-    {'.','W','.','.','W','.','.','W','.'},
-    {'.','.','.','W','.','.','.','.','.'},
-    {'W','.','.','W','.','W','.','.','.'},
-    {'.','.','.','W','.','W','.','W','.'},
+    {'.','W','.','.','.','.','.','.','.','W','.','W','.','.',',','.','.','W','.','W','.','.',','},
+    {'.','.','.','.','.','.','.','W','.',',','.','.','.','W','W','.','.','W','.','W','.','.',','},
+    {'.','W','.','.','.','.','.','.','W',',','.','W','.','.','W','.','.','.','.','.','.','.',','},
+    {'.','W','.','W','W','W','W','W','.',',','.','.','.','.',',','.','.','.','.','W','.','.',','},
+    {'.','.','.','W','.','W','.','.','W',',','.','.','W','.',',','.','.','.','.','.','.','.',','},
+    {'W','.','.','W','.','W','W','.','W',',','W','W','.','.',',','.','.','.','.','.','.','.',','},
+    {'.','W','.','.','.','.','.','.','W',',','.','.','.','W',',','.','.','W','.','W','.','.',','},
+    {'.','.','.','.','W','.','.','.','W',',','.','W','.','.',',','.','.','.','.','.','.','.',','},
+    {'.','W','.','.','W','.','W','.','W',',','W','.','W','W',',','.','.','W','.','.','.','.',','},
+    
 };
 map <pair<int, int>, bool> explored; //stores coordinates already explored
-
-string color(string a) { //color character a 
-    if (a == "*")return "\x1B[33m*\33[0m"; //yellow character and trail
-    if (a == "W")return "\x1B[31mW\033[0m"; //red walls
-    return "\x1B[92m" + a + "\033[0m"; //cyan ground and finish point
+string Color(char c) { // color a character
+    if (c == WALL) return  "\033[48;5;196m\033[38;5;232m \033[0m"; //red block for wall 
+    if (c == PATH) return  "\033[48;5;14m\033[38;5;232m \033[0m";  //blue block for explored path 
+    if (c == DESTINATION) return  "\033[48;5;34m\033[38;5;232m \033[0m"; //green block for destination
+    return  "\033[48;5;15m\033[38;5;232m \033[0m"; //white block for empty space
 }
 void InitialiseTerminal() {
     for (int i = 0;i < m.size();i++) {
         for (int j = 0;j < m[i].size();j++) { 
-             string c = ""; c += m[i][j];
-             cout << color(c)<<" "; 
+            if(i==m.size()-1 && j ==m[i].size()-1 ){
+                cout << Color(DESTINATION); 
+            }else{
+                cout << Color(m[i][j]); 
+            }
         }
-        cout << "\n\n";
+        cout << "\n";
     }
 }
 void setCursorPosition(const int row, const int col)
@@ -43,11 +51,9 @@ void setCursorPosition(const int row, const int col)
     SetConsoleCursorPosition(hOut, coord);
 }
 bool DFS(int row, int col) { //called as DFS(0,0)
-    //path.push_back({row,col});
-        //output(); 
     std::this_thread::sleep_for(std::chrono::milliseconds(150));
-    setCursorPosition(row*2, col*2);
-    std::cout << color("*");
+    setCursorPosition(row, col);
+    std::cout << Color(PATH);
     vector <int> dr = { 1,0,-1,0 }; // translation horizontally
     vector <int> dc = { 0,1,0,-1 }; //translation vertically
 
@@ -56,7 +62,7 @@ bool DFS(int row, int col) { //called as DFS(0,0)
     int rr, cc;
     for (int i = 0;i < 4;i++) {
         rr = row + dr[i]; cc = col + dc[i];
-        if (rr > -1 && rr <m.size() && cc>-1 && cc < m[m.size() - 1].size() && m[rr][cc] != 'W' && explored[{rr, cc}] == 0) {
+        if (rr > -1 && rr <m.size() && cc>-1 && cc < m[m.size() - 1].size() && m[rr][cc] != WALL && explored[{rr, cc}] == 0) {
             explored[{row, col}] = 1; //update list of explored coordinates
             if (DFS(rr, cc) == 1){return 1;}
         }

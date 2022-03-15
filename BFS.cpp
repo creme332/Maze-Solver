@@ -2,60 +2,63 @@
 #include <vector>
 #include <map>
 #include <deque>
-
+#include <windows.h>
+#include <thread>
+#define WALL 'W'
+#define EMPTY '.'
+#define PATH 'o'
+#define SHORTESTPATH 's'
+#define DESTINATION 'f'
 using namespace std;
 
 //Goal : Reach bottom right corner of maze from (0,0). Can move in any orthogonal direction.
 
 vector <vector<char>> m = {
-    {'.','W','.','.','.','.','.','.','.'},
-    {'.','.','.','W','.','W','.','W','.'},
-    {'.','.','.','W','W','W','.','.','.'},
-    {'.','.','.','.','.','W','.','W','.'},
-    {'W','.','.','W','W','.','.','.','.'},
-    {'.','W','.','.','W','.','.','W','.'},
-    {'.','.','.','W','.','.','.','.','.'},
-    {'W','.','.','W','.','W','.','.','.'},
-    {'.','.','.','W','.','W','.','W','.'},
+    {'.','W','.','.','.','.','.','.','.','W','.','W','.','.',',','.','.','W','.','W','.','.',','},
+    {'.','.','.','.','.','.','.','W','.',',','.','.','.','W','W','.','.','W','.','W','.','.',','},
+    {'.','W','.','.','.','.','.','.','W',',','.','W','.','.','W','.','.','.','.','.','.','.',','},
+    {'.','W','.','W','W','W','W','W','.',',','.','.','.','.',',','.','.','.','.','W','.','.',','},
+    {'.','.','.','W','.','W','.','.','W',',','.','.','W','.',',','.','.','.','.','.','.','.',','},
+    {'W','.','.','W','.','W','W','.','W',',','W','W','.','.',',','.','.','.','.','.','.','.',','},
+    {'.','W','.','.','.','.','.','.','W',',','.','.','.','W',',','.','.','W','.','W','.','.',','},
+    {'.','.','.','.','W','.','.','.','W',',','.','W','.','.',',','.','.','.','.','.','.','.',','},
+    {'.','W','.','.','W','.','W','.','W',',','W','.','W','W',',','.','.','W','.','.','.','.',','},
+    
 };
 
 deque <pair<int, int>> shortestpath; //stores nodes along shortest path
 
-string color(string a) { //color character a 
-    if (a == "o")return "\x1B[33m0\033[0m"; //yellow character and trail
-    if (a == "t")return "\x1B[33mo\033[0m"; //yellow trail
-    if (a == "W")return "\x1B[31mW\033[0m"; //red walls
-    return "\x1B[92m" + a + "\033[0m"; //cyan ground and finish point
+void setCursorPosition(const int row, const int col)
+{
+    static const HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+    std::cout.flush();
+    COORD coord = { (SHORT)col, (SHORT)row };
+    SetConsoleCursorPosition(hOut, coord);
 }
-
-void output() { 
-    //animate shortest path for BFS()
-    //move character + leave a trail behind.
- 
-    for (auto n : shortestpath) { //output each node along shortest path
-
-        for (int i = 0;i < m.size();i++) {
-            for (int j = 0;j < m[i].size();j++) {
-                if (i == n.first && j == n.second) {
-                    cout << color("o") << "   ";
-                    m[n.first][n.second] = 't'; //trail
-                }
-                else {
-                    string c = ""; c += m[i][j];
-                    if (i == m.size() - 1 && j == m[m.size() - 1].size() - 1) {
-                        cout << color("f") << "   ";
-                    }
-                    else {
-                        cout << color(c) << "   ";
-                    }
-                }
+string Color(char c) { // color a character
+    if (c == WALL) return  "\033[48;5;196m\033[38;5;232m \033[0m"; //red block for wall 
+    if (c == PATH) return  "\033[48;5;14m\033[38;5;232m \033[0m";  //blue block for explored path 
+    if (c == SHORTESTPATH) return  "\033[48;5;21m\033[38;5;232m \033[0m";  //dark blue block for shortest path 
+    if (c == DESTINATION) return  "\033[48;5;34m\033[38;5;232m \033[0m"; //green block for finish point
+    return  "\033[48;5;15m\033[38;5;232m \033[0m"; //white block for empty space
+}
+void InitialiseTerminal() {
+    for (int i = 0;i < m.size();i++) {
+        for (int j = 0;j < m[i].size();j++) { 
+            if(i==m.size()-1 && j ==m[i].size()-1 ){ //finish point
+                cout << Color(DESTINATION); 
+            }else{
+                cout << Color(m[i][j]); 
             }
-            cout << "\n";
-            cout << "\n";
         }
-       for (int k = 0;k < 99999999;k++); //freeze screen
-       system("CLS");
-
+        cout << "\n";
+    }
+}
+void OutputShortestPath() { 
+    for (auto n : shortestpath) { //output each node along shortest path
+        setCursorPosition(n.first,n.second);
+        cout<<Color(SHORTESTPATH);
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }
 }
 
@@ -78,8 +81,11 @@ int BFS() {// find shortest path using BFS
 
             if (x > -1 && x < m.size() && y > -1
                 && y < m[m.size() - 1].size() && parentnode.count({ x,y }) == 0
-                && m[x][y] != 'W')
+                && m[x][y] != WALL)
             {
+                setCursorPosition(x,y); cout<<Color(PATH);
+                std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
                 NextNode.push_back({ x,y });
                 parentnode[{x, y}] = { currentcoord.first,currentcoord.second };
                 distance[{x, y}] = distance[currentcoord] + 1;
@@ -104,7 +110,10 @@ int BFS() {// find shortest path using BFS
 }
 
 int main() {
-    cout << BFS() << endl; 
-    output(); //NOTE : maze is permanently modified after this call and cannot be used again.    
+    system("cls");
+    InitialiseTerminal();
+    BFS(); //BFS also outputs number of steps required to reach destination 
+    OutputShortestPath(); 
+    cout<<"\n";
 
 }
