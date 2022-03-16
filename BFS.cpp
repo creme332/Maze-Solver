@@ -7,28 +7,28 @@
 #define WALL 'W'
 #define EMPTY '.'
 #define PATH 'o'
-#define SHORTESTPATH 's'
+#define START 's'
+#define SHORTESTPATH 'p'
 #define DESTINATION 'f'
 using namespace std;
 
-//Goal : Reach bottom right corner of maze from (0,0). Can move in any orthogonal direction.
+//Goal : Reach DESTINATION from (0,0). Can move in any orthogonal direction.
 
 vector <vector<char>> m = {
-    {'s','W','.','.','.','.','.','.','.','W','.','W','.','.','.','.','.','W','.','W','.','.','.'},
+    {START,'W','.','.','.','.','.','.','.','W','.','W','.','.','.','.','.','W','.','W','.','.','.'},
     {'.','.','.','.','W','.','.','W','.','.','.','.','.','W','W','.','.','W','.','W','.','.','.'},
-    {'.','W','.','.','W','.','.','.','.','.','.','W','.','.','W','.','.','.','.','.','.','.','.'},
+    {'.','W','.','.','W','.','.','.','.','.','.','W','.','.','W','.','.','.',DESTINATION,'.','.','.','.'},
     {'.','W','.','W','W','W','W','W','W','.','.','.','.','W','.','W','.','.','.','W','.','.','.'},
     {'.','.','.','W','.','W','.','.','W','.','.','.','W','.','.','.','W','.','.','.','.','W','.'},
     {'W','.','.','W','.','W','W','.','W','.','W','W','.','W','.','.','.','W','.','.','W','.','.'},
     {'.','W','.','.','.','.','.','.','W','W','W','W','.','W','.','.','.','W','.','W','.','.','.'},
     {'.','.','.','.','W','.','.','.','.','.','.','.','.','.','.','.','.','.','W','.','.','.','.'},
-    {'.','W','.','.','W','.','W','.','.','.','W','W','W','W','.','.','.','W','.','.','.','.','f'},
+    {'.','W','.','.','W','.','W','.','.','.','W','W','W','W','.','.','.','W','.','.','.','.','.'},
     
 };
 deque <pair<int, int>> shortestpath; //stores nodes along shortest path
 
-void setCursorPosition(const int row, const int col)
-{
+void setCursorPosition(const int row, const int col){
     static const HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
     std::cout.flush();
     COORD coord = { (SHORT)col, (SHORT)row };
@@ -36,18 +36,19 @@ void setCursorPosition(const int row, const int col)
 }
 string Color(char c) { // color a character
     if (c == WALL) return  "\033[48;5;196m\033[38;5;232m \033[0m"; //red block for wall 
-    if (c == PATH) return  "\033[48;5;14m\033[38;5;232m \033[0m";  //blue block for explored path 
+    if (c == PATH || c == START) return  "\033[48;5;14m\033[38;5;232m \033[0m";  //blue block for explored path 
     if (c == SHORTESTPATH) return  "\033[48;5;21m\033[38;5;232m \033[0m";  //dark blue block for shortest path 
     if (c == DESTINATION) return  "\033[48;5;34m\033[38;5;232m \033[0m"; //green block for finish point
-    return  "\033[48;5;15m\033[38;5;232m \033[0m"; //white block for empty space
+    if (c == EMPTY) return "\033[48;5;15m\033[38;5;232m \033[0m"; //white block for empty space
+    return "INVALID";
 }
 void InitialiseTerminal() {
     for (int i = 0;i < m.size();i++) {
         for (int j = 0;j < m[i].size();j++) { 
-            if(i==m.size()-1 && j ==m[i].size()-1 ){ //finish point
-                cout << Color(DESTINATION); 
-            }else{
-                cout << Color(m[i][j]); 
+            if(m[i][j] == START){cout << Color(START);}
+            else{
+                if(m[i][j] == DESTINATION){cout << Color(DESTINATION);}
+                else{cout << Color(m[i][j]);}
             }
         }
         cout << "\n";
@@ -89,7 +90,7 @@ int BFS() {// find shortest path using BFS
                 parentnode[{x, y}] = { currentcoord.first,currentcoord.second };
                 distance[{x, y}] = distance[currentcoord] + 1;
 
-                if (x == m.size() - 1 && y == m[m.size() - 1].size() - 1) {//shortest path reached
+                if (m[x][y] == DESTINATION) {//destination & shortest path reached
                     int ans = distance[{x, y}];
                     int x0, y0;
                     while (x != -1) {
@@ -105,14 +106,25 @@ int BFS() {// find shortest path using BFS
 
         }
     }
-    return 0;
+    return -1;
 }
-
+void hidecursor()
+{
+   HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+   CONSOLE_CURSOR_INFO info;
+   info.dwSize = 100;
+   info.bVisible = FALSE;
+   SetConsoleCursorInfo(consoleHandle, &info);
+}
 int main() {
     system("cls");
+    hidecursor();
+
     InitialiseTerminal();
     BFS(); //BFS also outputs number of steps required to reach destination 
     OutputShortestPath(); 
+
+    setCursorPosition(m.size(),m[m.size()-1].size());
     cout<<"\n";
 
 }
