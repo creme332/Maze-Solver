@@ -6,6 +6,7 @@
         "utility": "cpp",
         "iostream": "cpp",
         "xstring": "cpp",
-        "thread": "cpp"
+        "thread": "cpp",
+        "chrono": "cpp"
     }
 }
