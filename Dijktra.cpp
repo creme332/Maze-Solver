@@ -128,5 +128,7 @@ int main(){
     Dijktra(); //returns shortest distance in terms of number of steps required
     OutputShortestPath();
     
-    setCursorPosition(m.size()+20,m[m.size()-1].size()+20);
+
+    setCursorPosition(m.size(),m[m.size()-1].size());
+    cout<<"\n";
 }
