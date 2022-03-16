@@ -116,6 +116,7 @@ void hidecursor()
    info.bVisible = FALSE;
    SetConsoleCursorInfo(consoleHandle, &info);
 }
+
 int main() {
     system("cls");
     hidecursor();

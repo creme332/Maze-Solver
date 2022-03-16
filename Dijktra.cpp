@@ -15,15 +15,15 @@ using namespace std;
 //Goal : Reach (n-1,n-1) from (0,0). Can move in any orthogonal direction
 
 vector <vector<char>> m = {
-    {'s','W','.','.','.','.','.','.','.','W','.','W','.','.','.','.','.','W','.','W','.','.','.'},
-    {'.','.','.','.','W','.','.','W','.','.','.','.','.','W','W','.','.','W','.','W','.','.','.'},
-    {'.','W','.','.','W','.','.','.','.','.','.','W','.','.','W','.','.','.','.','.','.','.','.'},
-    {'.','W','.','W','W','W','W','W','W','.','.','.','.','W','.','W','.','.','.','W','.','.','.'},
-    {'.','.','.','W','.','W','.','.','W','.','.','.','W','.','.','.','W','.','.','.','.','W','.'},
-    {'W','.','.','W','.','W','W','.','W','.','W','W','.','W','.','.','.','W','.','.','W','.','.'},
-    {'.','W','.','.','.','.','.','.','W','W','W','W','.','W','.','.','.','W','.','W','.','.','.'},
-    {'.','.','.','.','W','.','.','.','.','.','.','.','.','.','.','.','.','.','W','.','.','.','.'},
-    {'.','W','.','.','W','.','W','.','.','.','W','W','W','W','.','.','.','W','.','.','.','.','f'},
+    {START,'W','.','.','.','.','.','.','.','W','.','W','.','.','.','.','.','W','.','W','.','.','.'},
+    {'.','.','.','.','.','.','.','W','.','.','.','.','.','W','W','.','.','W','.','W','.','.','.'},
+    {'.','W','.','.','.','.','.','.','W','.','.','W','.','.','W','.','.','.','.','.','.','.','.'},
+    {'.','W','.','W','W','W','W','W','.','.','.','.','.','.','.','.','.','.','.','W','.','.','.'},
+    {'.','.','.','W','.','W','.','.','W','.','.','.','W','.','.','.','.','.','.','.','.','.','.'},
+    {'W','.','.','W','.','W','W','.','W','.','W','W','.','.','.','.','.','.','.','.','.','.','.'},
+    {'.','W','.','.','.','.','.','.','W','.','.','.','.','W','.','.','.','W','.','W','.','.','.'},
+    {'.','.','.','.','W','.','.','.','W','.','.','W','.','.','.','.','.','.','.','.','.','.','.'},
+    {'.','W','.','.','W','.','W','.','W','.','W','.','W','W','.','.','.','W','.','.','.','.',DESTINATION},
     
 };
 deque <pair<int, int>> shortestpath; //stores nodes along shortest path
@@ -47,11 +47,14 @@ void setCursorPosition(const int row, const int col)
 void InitialiseTerminal() {
     for (int i = 0;i < m.size();i++) {
         for (int j = 0;j < m[i].size();j++) { 
-                cout << Color(m[i][j]); 
+            if(m[i][j] == START){cout << Color(START);}
+            else{
+                if(m[i][j] == DESTINATION){cout << Color(DESTINATION);}
+                else{cout << Color(m[i][j]);}
+            }
         }
         cout << "\n";
     }
-    setCursorPosition(0,0); Color(PATH);
 }
 
 int Dijktra() {
@@ -92,7 +95,7 @@ int Dijktra() {
         }
     }
     int x0, y0;
-    x = m.size() - 1; y = m[m.size()-1].size() - 1;
+    x = m.size() - 1; y = m[m.size()-1].size() - 1; //set (x,y) to destination coordinates
     while (x != -1) {
         shortestpath.push_front({x,y});
         x0 = x; y0 = y;
@@ -108,12 +111,22 @@ void OutputShortestPath() {
         std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }
 }
+void hidecursor()
+{
+   HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+   CONSOLE_CURSOR_INFO info;
+   info.dwSize = 100;
+   info.bVisible = FALSE;
+   SetConsoleCursorInfo(consoleHandle, &info);
+}
+
 int main(){
     system("cls");
+    hidecursor();
 
     InitialiseTerminal();
-    Dijktra();
+    Dijktra(); //returns shortest distance in terms of number of steps required
     OutputShortestPath();
+    
     setCursorPosition(m.size()+20,m[m.size()-1].size()+20);
-    cout<<"\n\n\n\nDONE!";
 }
