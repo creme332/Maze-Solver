@@ -9,6 +9,7 @@ BFS
 
 # Future work # 
 - [ ] Randomly generate maze
+- [ ] Vary position of start and finish 
 - [ ] Add Dijktra algorithm
 - [ ] Add Greedy BFS
 - [x] Improve output 
