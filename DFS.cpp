@@ -11,7 +11,7 @@
 #define DESTINATION 'f'
 using namespace std;
 
-//Goal : Reach (n-1,n-1) from (0,0). Can move in any orthogonal direction
+//Reach destination while moving in any orthogonal direction
 
 vector <vector<char>> m = {
     {'.','W','.','.','.','.','.','.','.','W','.','W','.','.',DESTINATION,'.','.','W','.','W','.','.','.'},
