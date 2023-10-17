@@ -1,13 +1,16 @@
-# 🤖 Maze-Solver
-DFS
+# 🤖 Maze Solver
 
-![](Media/UpdatedDFS.gif)
+Implementation of path-solving algorithms (DFS, BFS, Dijktra) in terminal without any graphics library.
 
-BFS
+DFS:
 
-![](Media/BFS.gif)
+![GIF showing DFS](Media/UpdatedDFS.gif)
 
-# 🔮Future work # 
+BFS:
+
+![GIF showing BFS](Media/BFS.gif)
+
+## To-do
 - [ ] Randomly generate maze
 - [ ] Vary position of start and finish 
 - [x] Add Dijktra algorithm
